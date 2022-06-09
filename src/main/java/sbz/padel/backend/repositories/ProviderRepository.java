@@ -19,4 +19,6 @@ public interface ProviderRepository extends IRepository<Provider> {
 
     public Page<Provider> findByNameContaining(String name, Pageable pageable);
 
+    public Page<Provider> findByOrderByNameAsc(Pageable pageable);
+
 }

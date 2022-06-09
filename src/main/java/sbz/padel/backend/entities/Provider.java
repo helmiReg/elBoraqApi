@@ -23,7 +23,7 @@ import sbz.padel.backend.entities.base.BaseEntity;
 @Filter(name = "deletedUserFilter", condition = "is_active = :isActive")
 public class Provider extends BaseEntity implements Serializable {
 
-    @Column(nullable = false, length = 64)
+    @Column(nullable = false, length = 64, unique = true)
     private String name;
     @Column(nullable = false)
     private double solde;

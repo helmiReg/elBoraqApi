@@ -10,4 +10,6 @@ import sbz.padel.backend.entities.base.BaseEntity;
 @NoRepositoryBean
 public interface IRepository<T extends BaseEntity> extends PagingAndSortingRepository<T, Long> {
     abstract public Page<T> findAllByActive(boolean isActive, Pageable pageable);
+
+    abstract public Page<T> findAll(Pageable pageable);
 }

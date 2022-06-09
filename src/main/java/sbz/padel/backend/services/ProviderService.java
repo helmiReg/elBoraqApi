@@ -3,7 +3,9 @@ package sbz.padel.backend.services;
 import javax.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import sbz.padel.backend.entities.Provider;
@@ -29,8 +31,16 @@ public class ProviderService extends BaseService<Provider> {
         return this.providerRepository.totalSolde();
     }
 
-    public Page<Provider> findByName(String name, Pageable pageable) {
-        return this.providerRepository.findByNameContaining(name, pageable);
+    public Page<Provider> findByName(String name, int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        // create Pageable instance
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        if (name == "") {
+            return this.providerRepository.findAll(pageable);
+        } else
+            return this.providerRepository.findByNameContaining(name, pageable);
     }
 
 }
