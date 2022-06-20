@@ -22,6 +22,8 @@ import sbz.padel.backend.services.CustomerTransactionService;
 @RequestMapping("/transaction")
 public class CustomerTransactionController extends BaseController<CustomerTransaction> {
     private final CustomerTransactionService customerTransactionService;
+    private final DateTimeFormatter df = new DateTimeFormatterBuilder().parseCaseInsensitive()
+            .append(DateTimeFormatter.ofPattern("yyyy-MM-dd")).toFormatter();
 
     public CustomerTransactionController(CustomerTransactionService customerTransactionService) {
         super(customerTransactionService);
@@ -49,10 +51,8 @@ public class CustomerTransactionController extends BaseController<CustomerTransa
             @RequestParam(value = "fromDate") String fromDate,
             @RequestParam(value = "toDate") String toDate,
             Pageable pageable) {
-        DateTimeFormatter df = new DateTimeFormatterBuilder().parseCaseInsensitive()
-                .append(DateTimeFormatter.ofPattern("yyyy-MM-dd")).toFormatter();
-        LocalDate newFromDate = LocalDate.parse(fromDate, df);
-        LocalDate newToDate = LocalDate.parse(toDate, df);
+        LocalDate newFromDate = LocalDate.parse(fromDate, this.df);
+        LocalDate newToDate = LocalDate.parse(toDate, this.df);
         return this.customerTransactionService.findAllBetween(isActive, newFromDate, newToDate, pageable);
     }
 
@@ -63,10 +63,9 @@ public class CustomerTransactionController extends BaseController<CustomerTransa
             @RequestParam(value = "toDate") String toDate,
             @PathVariable(value = "id") Long id,
             Pageable pageable) {
-        DateTimeFormatter df = new DateTimeFormatterBuilder().parseCaseInsensitive()
-                .append(DateTimeFormatter.ofPattern("yyyy-MM-dd")).toFormatter();
-        LocalDate newFromDate = LocalDate.parse(fromDate, df);
-        LocalDate newToDate = LocalDate.parse(toDate, df);
+
+        LocalDate newFromDate = LocalDate.parse(fromDate, this.df);
+        LocalDate newToDate = LocalDate.parse(toDate, this.df);
         return this.customerTransactionService.findAllByCustomerDateBetween(isActive, newFromDate, newToDate, id,
                 pageable);
     }

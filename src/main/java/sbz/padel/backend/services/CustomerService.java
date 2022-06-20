@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import sbz.padel.backend.config.RestServerResponseException;
 import sbz.padel.backend.entities.Customer;
 import sbz.padel.backend.entities.CustomerInvoice;
 import sbz.padel.backend.entities.CustomerTransaction;
@@ -49,9 +50,7 @@ public class CustomerService extends BaseService<Customer> {
 
     @Transactional
     public Customer update(Customer customer, Long id) {
-        try {
-            Optional<Customer> opCustomer = this.customerRepository.findById(id);
-            Customer existingCustomer = opCustomer.get();
+            Customer existingCustomer = this.customerRepository.findById(id).orElseThrow(()-> new RestServerResponseException(HttpStatus.NOT_FOUND,"Client introuvable!"));
             if (customer.getAddress() != null)
                 existingCustomer.setAddress(customer.getAddress());
             if (customer.getBank() != null)
@@ -62,33 +61,11 @@ public class CustomerService extends BaseService<Customer> {
                 existingCustomer.setCin(customer.getCin());
             if (customer.getGuarantee() != null)
                 existingCustomer.setGuarantee(customer.getGuarantee());
-            if ((Double) customer.getSoldeInitial() != null)
-                existingCustomer.setSoldeInitial(customer.getSoldeInitial());
             if (customer.getName() != null)
                 existingCustomer.setName(customer.getName());
-            if ((Double) customer.getSolde() != 0)
-                existingCustomer.setSolde(customer.getSolde());
             if (customer.getTelephone() != null)
                 existingCustomer.setTelephone(customer.getTelephone());
-            if ((Boolean) customer.getActive() != null) {
-                if (customer.getActive() && !existingCustomer.getActive()) {
-                    List<CustomerInvoice> customerInvoices = existingCustomer.getInvoices();
-                    for (CustomerInvoice customerInvoice : customerInvoices) {
-                        customerInvoice.setActive(true);
-                        this.customerInvoiceRepository.save(customerInvoice);
-                    }
-                    List<CustomerTransaction> customerTransactions = existingCustomer.getTransactions();
-                    for (CustomerTransaction customerTransaction : customerTransactions) {
-                        customerTransaction.setActive(true);
-                        this.customerTransactionRepository.save(customerTransaction);
-                    }
-                }
-                existingCustomer.setActive(customer.getActive());
-            }
             return this.customerRepository.save(existingCustomer);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, " element not existed");
-        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package sbz.padel.backend.repositories;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +32,7 @@ public interface ChequeRepository extends IRepository<Cheque> {
         @Query(value = "SELECT sum(solde) FROM Cheque where date BETWEEN :fromDate And :toDate")
         public double sumBetween(@Param("fromDate") LocalDate fromDate, @Param("toDate") LocalDate toDate);
 
-        public Cheque findByNumber(int number);
+        public Optional<Cheque> findByNumber(int number);
 
         public Cheque findByProvider(Provider provider);
 
