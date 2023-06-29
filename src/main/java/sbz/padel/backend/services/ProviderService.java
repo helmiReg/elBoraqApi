@@ -1,6 +1,5 @@
 package sbz.padel.backend.services;
 
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -32,7 +31,8 @@ public class ProviderService extends BaseService<Provider> {
         if (!StringUtils.hasText(name)) {
             return this.providerRepository.findAllByActive(isActive, PageRequest.of(pageNo, pageSize, sort));
         }
-        return this.providerRepository.findByNameContainingAndActive(name, PageRequest.of(pageNo, pageSize, sort), isActive);
+        return this.providerRepository.findByNameContainingIgnoreCaseAndActive(name,
+                isActive, PageRequest.of(pageNo, pageSize, sort));
     }
 
 }

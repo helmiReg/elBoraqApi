@@ -17,7 +17,7 @@ public interface ProviderRepository extends IRepository<Provider> {
     @Query(value = "SELECT sum(solde) FROM Provider")
     public double totalSolde();
 
-    public Page<Provider> findByNameContainingAndActive(String name, Pageable pageable, boolean active);
+    public Page<Provider> findByNameContainingIgnoreCaseAndActive(String name, boolean active, Pageable pageable);
 
     public Page<Provider> findByOrderByNameAsc(Pageable pageable);
 
