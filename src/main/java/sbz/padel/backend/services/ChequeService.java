@@ -33,15 +33,17 @@ public class ChequeService extends BaseService<Cheque> {
     @Override
     @Transactional
     public void deleteById(Long id) {
-            Cheque existingCheque = this.chequeRepository.findById(id).orElseThrow(()-> new RestServerResponseException(HttpStatus.NOT_FOUND, "cheque introuvable!"));
-            Provider provider = this.providerRepository.findById(existingCheque.getProvider().getId()).orElseThrow(()-> new RestServerResponseException(HttpStatus.NOT_FOUND, "Fournisseur introuvable!"));
-            if (existingCheque.isState()) {
-                this.chequeRepository.delete(existingCheque);
-            } else {
-                provider.setSolde(provider.getSolde() - existingCheque.getSolde());
-                this.providerRepository.save(provider);
-                this.chequeRepository.delete(existingCheque);
-            }
+        Cheque existingCheque = this.chequeRepository.findById(id)
+                .orElseThrow(() -> new RestServerResponseException(HttpStatus.NOT_FOUND, "cheque introuvable!"));
+        Provider provider = this.providerRepository.findById(existingCheque.getProvider().getId())
+                .orElseThrow(() -> new RestServerResponseException(HttpStatus.NOT_FOUND, "Fournisseur introuvable!"));
+        if (existingCheque.isState()) {
+            this.chequeRepository.delete(existingCheque);
+        } else {
+            provider.setSolde(provider.getSolde() - existingCheque.getSolde());
+            this.providerRepository.save(provider);
+            this.chequeRepository.delete(existingCheque);
+        }
     }
 
     public double sumPending() {
@@ -54,11 +56,11 @@ public class ChequeService extends BaseService<Cheque> {
     }
 
     public double sumPaid() {
-            return this.chequeRepository.sumPaid();
+        return this.chequeRepository.sumPaid();
     }
 
     public double sum() {
-            return this.chequeRepository.sum();
+        return this.chequeRepository.sum();
 
     }
 
@@ -74,32 +76,40 @@ public class ChequeService extends BaseService<Cheque> {
         return this.chequeRepository.sumBetween(fromDate, toDate);
     }
 
+    @Transactional
     public Cheque save(Cheque cheque) {
-            Provider provider = this.providerRepository.findById(cheque.getProvider().getId()).orElseThrow(()-> new RestServerResponseException(HttpStatus.NOT_FOUND, "Fournisseur introuvable!"));
-            provider.setSolde(provider.getSolde() + cheque.getSolde());
-            this.providerRepository.save(provider);
-            return this.chequeRepository.save(cheque);
+        Provider provider = this.providerRepository.findById(cheque.getProvider().getId())
+                .orElseThrow(() -> new RestServerResponseException(HttpStatus.NOT_FOUND, "Fournisseur introuvable!"));
+        provider.setSolde(provider.getSolde() + cheque.getSolde());
+        this.providerRepository.save(provider);
+        return this.chequeRepository.save(cheque);
     }
 
     public Cheque payCheque(Long id) {
-            Cheque existingCheque = this.chequeRepository.findById(id).orElseThrow(()-> new RestServerResponseException(HttpStatus.NOT_FOUND, "Cheque introuvable!"));
-            Provider provider = this.providerRepository.findById(existingCheque.getProvider().getId()).orElseThrow(()-> new RestServerResponseException(HttpStatus.NOT_FOUND, "Fournisseur introuvable!"));
-            if (existingCheque.isState())
-                return existingCheque;
-            existingCheque.setState(true);
-            provider.setSolde(provider.getSolde() - existingCheque.getSolde());
-            this.providerRepository.save(provider);
-            return this.chequeRepository.save(existingCheque);
+        Cheque existingCheque = this.chequeRepository.findById(id)
+                .orElseThrow(() -> new RestServerResponseException(HttpStatus.NOT_FOUND, "Cheque introuvable!"));
+        Provider provider = this.providerRepository.findById(existingCheque.getProvider().getId())
+                .orElseThrow(() -> new RestServerResponseException(HttpStatus.NOT_FOUND, "Fournisseur introuvable!"));
+        if (existingCheque.isState())
+            return existingCheque;
+        existingCheque.setState(true);
+        provider.setSolde(provider.getSolde() - existingCheque.getSolde());
+        this.providerRepository.save(provider);
+        return this.chequeRepository.save(existingCheque);
     }
 
     public Cheque getByNumber(int number) {
-            Cheque existingCheque = this.chequeRepository.findByNumber(number).orElseThrow(()-> new RestServerResponseException(HttpStatus.NOT_FOUND, "Cheque de numéro #" + number + " est introuvable!"));;
-            return existingCheque;
+        Cheque existingCheque = this.chequeRepository.findByNumber(number)
+                .orElseThrow(() -> new RestServerResponseException(HttpStatus.NOT_FOUND,
+                        "Cheque de numéro #" + number + " est introuvable!"));
+        ;
+        return existingCheque;
     }
 
     public Page<Cheque> getByProvider(Long id, Pageable pageable) {
-            Provider existingProvider = this.providerRepository.findById(id).orElseThrow(()-> new RestServerResponseException(HttpStatus.NOT_FOUND, "Fournisseur introuvable!"));
-            return this.chequeRepository.findAllByProvider(existingProvider, pageable);
+        Provider existingProvider = this.providerRepository.findById(id)
+                .orElseThrow(() -> new RestServerResponseException(HttpStatus.NOT_FOUND, "Fournisseur introuvable!"));
+        return this.chequeRepository.findAllByProvider(existingProvider, pageable);
     }
 
     public Page<Cheque> getByStateOrderByDateAsc(Boolean state, Pageable pageable) {

@@ -28,6 +28,9 @@ public class Cheque extends BaseEntity implements Serializable {
     @ManyToOne
     @JsonIgnoreProperties(value = "cheques")
     private Provider provider;
+    @ManyToOne
+    @JsonIgnoreProperties(value = "cheques")
+    private BankAccount bankAccount;
     @Column(nullable = false)
     private LocalDate date;
     // pending=0 /// paid=1
@@ -75,6 +78,14 @@ public class Cheque extends BaseEntity implements Serializable {
 
     public void setState(boolean state) {
         this.state = state;
+    }
+
+    public BankAccount getBankAccount() {
+        return bankAccount;
+    }
+
+    public void setBankAccount(BankAccount bankAccount) {
+        this.bankAccount = bankAccount;
     }
 
 }
