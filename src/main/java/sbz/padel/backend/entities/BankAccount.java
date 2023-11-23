@@ -1,18 +1,14 @@
 package sbz.padel.backend.entities;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import sbz.padel.backend.entities.base.BaseEntity;
 

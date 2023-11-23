@@ -1,7 +1,6 @@
 package sbz.padel.backend.services;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -9,12 +8,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import sbz.padel.backend.config.RestServerResponseException;
+import sbz.padel.backend.entities.BankAccount;
 import sbz.padel.backend.entities.Cheque;
 import sbz.padel.backend.entities.Provider;
 import sbz.padel.backend.generics.BaseService;
+import sbz.padel.backend.repositories.BankAccountRepository;
 import sbz.padel.backend.repositories.ChequeRepository;
 import sbz.padel.backend.repositories.ProviderRepository;
 
@@ -23,11 +23,14 @@ public class ChequeService extends BaseService<Cheque> {
 
     private final ChequeRepository chequeRepository;
     private final ProviderRepository providerRepository;
+    private final BankAccountRepository bankAccountRepository;
 
-    public ChequeService(ChequeRepository chequeRepositoryitory, ProviderRepository providerRepository) {
+    public ChequeService(ChequeRepository chequeRepositoryitory, ProviderRepository providerRepository,
+            BankAccountRepository bankAccountRepository) {
         super(chequeRepositoryitory);
         this.chequeRepository = chequeRepositoryitory;
         this.providerRepository = providerRepository;
+        this.bankAccountRepository = bankAccountRepository;
     }
 
     @Override
@@ -81,6 +84,8 @@ public class ChequeService extends BaseService<Cheque> {
         Provider provider = this.providerRepository.findById(cheque.getProvider().getId())
                 .orElseThrow(() -> new RestServerResponseException(HttpStatus.NOT_FOUND, "Fournisseur introuvable!"));
         provider.setSolde(provider.getSolde() + cheque.getSolde());
+        BankAccount bankAccount = this.bankAccountRepository.findById(cheque.getBankAccount().getId()).orElseThrow(
+                () -> new RestServerResponseException(HttpStatus.NOT_FOUND, "compte bancaire introuvable!"));
         this.providerRepository.save(provider);
         return this.chequeRepository.save(cheque);
     }
